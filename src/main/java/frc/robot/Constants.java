@@ -7,20 +7,13 @@ import edu.wpi.first.math.util.Units;
 
 public final class Constants {
   public static final class DriveConstants {
-    // kitbot constants
-    public static final int LEFT_LEADER_ID = 1;
-    public static final int LEFT_FOLLOWER_ID = 2;
-    public static final int RIGHT_LEADER_ID = 3;
-    public static final int RIGHT_FOLLOWER_ID = 4;
-
-    public static final int DRIVE_MOTOR_CURRENT_LIMIT = 60;
   
     public static final double kMaxSpeedMetersPerSecond = 4.8;
     public static final double kMaxAngularSpeed = 2 * Math.PI; 
 
     // chassis width and length
-    public static final double kTrackWidth = Units.inchesToMeters(30);
-    public static final double kWheelBase = Units.inchesToMeters(32.5);
+    public static final double kTrackWidth = Units.inchesToMeters(28.5);
+    public static final double kWheelBase = Units.inchesToMeters(30.4);
 
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -35,17 +28,17 @@ public final class Constants {
     public static final double kBackRightChassisAngularOffset = Math.PI / 2; // 90 deg
 
     // SPARK MAX CAN IDs - Must change 
-    public static final int kFrontLeftDrivingCanId = 11;
-    public static final int kRearLeftDrivingCanId = 13;
-    public static final int kFrontRightDrivingCanId = 15;
-    public static final int kRearRightDrivingCanId = 17;
+    public static final int kFrontLeftDrivingCanId = 9;
+    public static final int kRearLeftDrivingCanId = 2;
+    public static final int kFrontRightDrivingCanId = 5;
+    public static final int kRearRightDrivingCanId = 4;
 
-    public static final int kFrontLeftTurningCanId = 10;
-    public static final int kRearLeftTurningCanId = 12;
-    public static final int kFrontRightTurningCanId = 14;
-    public static final int kRearRightTurningCanId = 16;
+    public static final int kFrontLeftTurningCanId = 8;
+    public static final int kRearLeftTurningCanId = 1;
+    public static final int kFrontRightTurningCanId = 6;
+    public static final int kRearRightTurningCanId = 3;
 
-    public static final boolean kGyroReversed = false;
+    public static final boolean kGyroReversed = true;
   }
 
   public static final class ModuleConstants {
@@ -93,7 +86,7 @@ public final class Constants {
     
   // kitbot constants
   public static final class RollerConstants {
-    public static final int ROLLER_MOTOR_ID = 5;
+    public static final int ROLLER_MOTOR_ID = 7;
     public static final int ROLLER_MOTOR_CURRENT_LIMIT = 60;
     public static final double ROLLER_MOTOR_VOLTAGE_COMP = 10;
     public static final double ROLLER_EJECT_VALUE = 0.44;
