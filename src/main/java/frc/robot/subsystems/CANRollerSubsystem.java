@@ -16,9 +16,11 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.vector.sbx.SBXMotor;
 
-/** Class to run the rollers over CAN */
+/** Class to run the rollers over CAN using Vector SBX */
 public class CANRollerSubsystem extends SubsystemBase {
+
   private final SparkMax rollerMotor;
   private final WPI_VictorSPX rollMotor;
 
@@ -48,11 +50,15 @@ public class CANRollerSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Print the current position of the roller for debugging
+    System.out.println("Roller Position: " + rollerEncoder.getPosition());
   }
 
-  /** This is a method that makes the roller spin */
+  /** Runs the roller at a manual speed */
   public void runRoller(double forward, double reverse) {
+
     rollerMotor.set(forward - reverse);
     rollMotor.set(forward-reverse);
+
   }
 }
