@@ -93,6 +93,7 @@ public final class Constants {
     public static final int ROLLER_MOTOR_CURRENT_LIMIT = 60;
     public static final double ROLLER_MOTOR_VOLTAGE_COMP = 10;
     public static final double ROLLER_EJECT_VALUE = 0.44;
+    public static final double ROLLER_SPEED = 0.5;
   }
 
   public static final class OperatorConstants {

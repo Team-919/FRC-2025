@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.RollerConstants;
 import frc.robot.subsystems.CANRollerSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -66,7 +67,7 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
-        .whileTrue(new StartEndCommand (() -> m_roller.setVoltage(1), () -> m_roller.setVoltage(0), m_roller));
+        .whileTrue(new StartEndCommand (() -> m_roller.setVoltage(RollerConstants.ROLLER_SPEED), () -> m_roller.setVoltage(0), m_roller));
   }
 
   /**
@@ -86,9 +87,9 @@ public class RobotContainer {
         // start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         // pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+        List.of(new Translation2d(1, 0)),
         // end 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
+        new Pose2d(2, 0, new Rotation2d(0)),
         config);
 
     var thetaController = new ProfiledPIDController(
