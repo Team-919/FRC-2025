@@ -55,4 +55,5 @@ public class CANRollerSubsystem extends SubsystemBase {
   public void setVoltage(double voltage) {
     rollMotor.set(voltage);
   }
+
 }

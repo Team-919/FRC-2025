@@ -8,7 +8,7 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static final class DriveConstants {
   
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
+    public static final double kMaxSpeedMetersPerSecond = 3.0;
     public static final double kMaxAngularSpeed = 2 * Math.PI; 
 
     // chassis width and length
@@ -66,7 +66,7 @@ public final class Constants {
 
   public static final class AutoConstants {
     // adjustable - max dist and rotating robot can do per s
-    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxSpeedMetersPerSecond = 1;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
@@ -93,7 +93,7 @@ public final class Constants {
     public static final int ROLLER_MOTOR_CURRENT_LIMIT = 60;
     public static final double ROLLER_MOTOR_VOLTAGE_COMP = 10;
     public static final double ROLLER_EJECT_VALUE = 0.44;
-    public static final double ROLLER_SPEED = 0.5;
+    public static final double ROLLER_SPEED = 0.3;
   }
 
   public static final class OperatorConstants {

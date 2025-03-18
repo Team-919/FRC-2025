@@ -17,15 +17,22 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.RollerConstants;
 import frc.robot.subsystems.CANRollerSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+//import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
+
+//import org.ejml.dense.row.CommonOps_MT_CDRM;
 
 public class RobotContainer {
     
@@ -61,13 +68,107 @@ public class RobotContainer {
    */
 
   // this button makes robot stop moving
-  private void configureButtonBindings() {
+    private void configureButtonBindings() {
     new JoystickButton(m_driverController, XboxController.Button.kX.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
-        .whileTrue(new StartEndCommand (() -> m_roller.setVoltage(RollerConstants.ROLLER_SPEED), () -> m_roller.setVoltage(0), m_roller));
+        .whileTrue(new StartEndCommand (() -> m_roller.setVoltage(0.3), () -> m_roller.setVoltage(0), m_roller));
+    new JoystickButton(m_driverController, XboxController.Button.kB.value)
+        .whileTrue(new RunCommand(() -> m_robotDrive.zeroHeading(), m_robotDrive));
+    new JoystickButton(m_driverController, XboxController.Button.kY.value)
+    .whileTrue(new StartEndCommand (() -> m_roller.setVoltage(-0.3), () -> m_roller.setVoltage(0), m_roller));
+    
+  }
+
+    public Command auto2(){
+        TrajectoryConfig config = new TrajectoryConfig(
+            1,
+            AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+            // kinematics to ensure max speed is actually obeyed
+            .setKinematics(DriveConstants.kDriveKinematics);
+
+        Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        // start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        // pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(1, 0)),
+        // end 3 meters straight ahead of where we started, facing forward
+        new Pose2d(5, 0, new Rotation2d(0)),
+        config);
+
+        Trajectory turning = TrajectoryGenerator.generateTrajectory(
+        // start at the origin facing the +X direction
+        new Pose2d(5, 0, new Rotation2d(0)),
+        // pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(4.5, 0)),
+        // end 3 meters straight ahead of where we started, facing forward
+        new Pose2d(4, 0, new Rotation2d(180)),
+        config);
+
+        var thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+            thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+        SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+            exampleTrajectory,
+            m_robotDrive::getPose, // functional interface to feed supplier
+            DriveConstants.kDriveKinematics,
+
+            // position controllers
+            new PIDController(AutoConstants.kPXController, 0, 0),
+            new PIDController(AutoConstants.kPYController, 0, 0),
+            thetaController,
+            m_robotDrive::setModuleStates,
+            m_robotDrive);
+
+            // reset odometry to the starting pose of the trajectory.
+            m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+
+        SwerveControllerCommand turningSwerveCommand = new SwerveControllerCommand(
+            turning,
+            m_robotDrive::getPose, // functional interface to feed supplier
+            DriveConstants.kDriveKinematics,
+
+            // position controllers
+            new PIDController(AutoConstants.kPXController, 0, 0),
+            new PIDController(AutoConstants.kPYController, 0, 0),
+            thetaController,
+            m_robotDrive::setModuleStates,
+            m_robotDrive);
+    
+        // reset odometry to the starting pose of the trajectory.
+        m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+    
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> m_robotDrive.zeroHeading()),
+            swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false)),
+            new ParallelDeadlineGroup(new WaitCommand(1.5), new StartEndCommand (() -> m_roller.setVoltage(0.3), () -> m_roller.setVoltage(0), m_roller)),
+            turningSwerveCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false)),
+            new InstantCommand(() -> m_robotDrive.zeroHeading())
+
+        );
+    }
+
+  public Command standStill(){
+    
+    return new InstantCommand();
+  }
+
+  public Command getAutonomousCommand2() {
+    return Commands.sequence(   
+        new WaitCommand(7),
+        new ParallelDeadlineGroup(
+            new WaitCommand(2),
+            new RunCommand(() -> m_robotDrive.drive(0.6, 0, 0, true), m_robotDrive)
+        ),
+        new ParallelDeadlineGroup(
+            new WaitCommand(1),
+            new RunCommand(() -> m_robotDrive.drive(0, 0, 0, false), m_robotDrive),
+            new StartEndCommand(() -> m_roller.setVoltage(0.3), () -> m_roller.setVoltage(0), m_roller)
+        )
+    );
   }
 
   /**
@@ -86,10 +187,10 @@ public class RobotContainer {
     Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
         // start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
-        // pass through these two interior waypoints, making an 's' curve path
+        // interior waypoint mandatory
         List.of(new Translation2d(1, 0)),
         // end 3 meters straight ahead of where we started, facing forward
-        new Pose2d(2, 0, new Rotation2d(0)),
+        new Pose2d(3, 0, new Rotation2d(0)),
         config);
 
     var thetaController = new ProfiledPIDController(
@@ -112,6 +213,13 @@ public class RobotContainer {
     m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
     // run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> m_robotDrive.zeroHeading()),
+        swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false)),
+        new ParallelDeadlineGroup(
+            new WaitCommand(1),
+            new StartEndCommand(() -> m_roller.setVoltage(0.3), () -> m_roller.setVoltage(0), m_roller)
+        )
+    );
   }
 }

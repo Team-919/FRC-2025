@@ -33,8 +33,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    
+    //Go Straight
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand2();
+
+    //Go Straight and spew L1 180 turn (middle position)
+    //m_autonomousCommand = m_robotContainer.auto2();
+
+    //dont move
+    //m_autonomousCommand = m_robotContainer.standStill();
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
