@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
+
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -28,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 //import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
@@ -41,6 +43,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   // driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  
 
   // the container for the robot. Contains subsystems, OI devices, and commands.
   public RobotContainer() {
@@ -69,10 +72,17 @@ public class RobotContainer {
 
   // this button makes robot stop moving
     private void configureButtonBindings() {
-    new JoystickButton(m_driverController, XboxController.Button.kX.value)
+    /*
+    new JoystickButton(m_driverController, XboxController.Axis.kLeftTrigger.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
+    */
+    new CommandXboxController(0).leftTrigger(.2).whileTrue(new RunCommand(() -> m_robotDrive.setX(), m_robotDrive));
+    new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value)
+        .onTrue(new InstantCommand(() -> m_robotDrive.speedDecrease(), m_robotDrive));
+    new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value)
+        .onTrue(new InstantCommand(() -> m_robotDrive.speedIncrease(), m_robotDrive));
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
         .whileTrue(new StartEndCommand (() -> m_roller.setVoltage(0.3), () -> m_roller.setVoltage(0), m_roller));
     new JoystickButton(m_driverController, XboxController.Button.kB.value)

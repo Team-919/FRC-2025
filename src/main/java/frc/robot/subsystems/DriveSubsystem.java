@@ -178,4 +178,16 @@ public class DriveSubsystem extends SubsystemBase {
     public double getTurnRate() {
         return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
     }
+
+    public void speedIncrease() {   
+        if(DriveConstants.kMaxSpeedMetersPerSecond < 6.0)
+        DriveConstants.kMaxSpeedMetersPerSecond += 1.0; 
+        System.out.println("Max Speed: " + DriveConstants.kMaxSpeedMetersPerSecond);       
+    }
+
+    public void speedDecrease() {
+        if(DriveConstants.kMaxSpeedMetersPerSecond > 3.0)
+        DriveConstants.kMaxSpeedMetersPerSecond -= 1.0;
+        System.out.println("Max Speed: " + DriveConstants.kMaxSpeedMetersPerSecond);       
+    }
 }

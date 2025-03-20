@@ -8,7 +8,7 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static final class DriveConstants {
   
-    public static final double kMaxSpeedMetersPerSecond = 3.0;
+    public static double kMaxSpeedMetersPerSecond = 3.0;
     public static final double kMaxAngularSpeed = 2 * Math.PI; 
 
     // chassis width and length
