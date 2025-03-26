@@ -24,33 +24,33 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
     // creates SwerveModules
-    private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
+    public final static MAXSwerveModule m_frontLeft = new MAXSwerveModule(
         DriveConstants.kFrontLeftDrivingCanId,
         DriveConstants.kFrontLeftTurningCanId,
         DriveConstants.kFrontLeftChassisAngularOffset);
 
-    private final MAXSwerveModule m_frontRight = new MAXSwerveModule(
+    public final static MAXSwerveModule m_frontRight = new MAXSwerveModule(
         DriveConstants.kFrontRightDrivingCanId,
         DriveConstants.kFrontRightTurningCanId,
         DriveConstants.kFrontRightChassisAngularOffset);
 
-    private final MAXSwerveModule m_rearLeft = new MAXSwerveModule(
+    public final static MAXSwerveModule m_rearLeft = new MAXSwerveModule(
         DriveConstants.kRearLeftDrivingCanId,
         DriveConstants.kRearLeftTurningCanId,
         DriveConstants.kBackLeftChassisAngularOffset);
 
-    private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
+    public final static MAXSwerveModule m_rearRight = new MAXSwerveModule(
         DriveConstants.kRearRightDrivingCanId,
         DriveConstants.kRearRightTurningCanId,
         DriveConstants.kBackRightChassisAngularOffset);
 
     // Gyro sensor NavX2    
-    private final AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI);
+    public final static AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI);
     //old gyro
     //private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
             
     // odometry class for tracking robot pose
-    SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
+    public static SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
         DriveConstants.kDriveKinematics,
         Rotation2d.fromDegrees(-m_gyro.getAngle()),
         new SwerveModulePosition[] {

@@ -4,22 +4,62 @@
 
 package frc.robot;
 
+//import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class Robot extends TimedRobot {
+
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+  private final Field2d m_field = new Field2d();
 
   public Robot() {
     m_robotContainer = new RobotContainer();
   }
 
   @Override
+  public void robotInit() {
+    SmartDashboard.putData("Field", m_field);
+    SmartDashboard.putData("Swerve Drive", new Sendable() {
+      @Override
+      public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("SwerveDrive");
+
+        builder.addDoubleProperty("Front Left Angle", () -> DriveSubsystem.m_frontLeft.m_turningEncoder.getPosition(), null);
+        builder.addDoubleProperty("Front Left Velocity", () -> DriveSubsystem.m_frontLeft.m_drivingEncoder.getVelocity(), null);
+
+        builder.addDoubleProperty("Front Right Angle", () -> DriveSubsystem.m_frontRight.m_turningEncoder.getPosition(), null);
+        builder.addDoubleProperty("Front Right Velocity", () -> DriveSubsystem.m_frontRight.m_drivingEncoder.getVelocity(), null);
+
+        builder.addDoubleProperty("Back Left Angle", () -> DriveSubsystem.m_rearLeft.m_turningEncoder.getPosition(), null);
+        builder.addDoubleProperty("Back Left Velocity", () -> DriveSubsystem.m_rearLeft.m_drivingEncoder.getVelocity(), null);
+
+        builder.addDoubleProperty("Back Right Angle", () -> DriveSubsystem.m_rearRight.m_turningEncoder.getPosition(), null);
+        builder.addDoubleProperty("Back Right Velocity", () -> DriveSubsystem.m_rearRight.m_drivingEncoder.getVelocity(), null);
+
+        builder.addDoubleProperty("Robot Angle", () -> DriveSubsystem.m_gyro.getAngle(), null);
+      }
+    });
+  }
+
+  @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    m_field.setRobotPose(DriveSubsystem.m_odometry.getPoseMeters());
+    SmartDashboard.putNumber("Max Speed", Constants.DriveConstants.kMaxSpeedMetersPerSecond);
+    SmartDashboard.putNumber("Match Timer", DriverStation.getMatchTime());
+    SmartDashboard.putNumber("Gyro", DriveSubsystem.m_gyro.getAngle());
+    SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
   }
 
   @Override
@@ -27,7 +67,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {}
-
+ 
   @Override
   public void disabledExit() {}
 
@@ -64,7 +104,8 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
   public void teleopExit() {}

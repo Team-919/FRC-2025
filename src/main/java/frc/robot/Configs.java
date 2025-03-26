@@ -28,7 +28,7 @@ public class Configs {
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 // may need to change, higher p reacts faster but can cause unwanted back and forth movement
                 // integral is drift correction derivitave is reduces sudden changes
-                .pid(0.08, 0, 0)//okok
+                .pid(0.09, 0, 0)//okok
                 .velocityFF(drivingVelocityFeedForward)
                 .outputRange(-1, 1);
 
