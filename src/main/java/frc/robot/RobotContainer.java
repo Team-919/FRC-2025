@@ -23,6 +23,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -166,19 +167,51 @@ public class RobotContainer {
     return new InstantCommand();
   }
 
-  public Command getAutonomousCommand2() {
-    return Commands.sequence(   
-        new WaitCommand(7),
+  public Command Middle() {
+    return Commands.sequence(
+        new InstantCommand(() -> m_robotDrive.zeroHeading()),
         new ParallelDeadlineGroup(
             new WaitCommand(2),
             new RunCommand(() -> m_robotDrive.drive(0.6, 0, 0, true), m_robotDrive)
         ),
         new ParallelDeadlineGroup(
             new WaitCommand(1),
-            new RunCommand(() -> m_robotDrive.drive(0, 0, 0, false), m_robotDrive),
+            new RunCommand(() -> m_robotDrive.drive(0, 0, 0, true), m_robotDrive),
             new StartEndCommand(() -> m_roller.setVoltage(0.3), () -> m_roller.setVoltage(0), m_roller)
-        )
+        ),
+        new ParallelDeadlineGroup(
+            new WaitCommand(0.5),
+            new RunCommand(() -> m_robotDrive.drive(-0.6, 0, 0, true), m_robotDrive)
+        ),
+        new ParallelDeadlineGroup(
+            new WaitCommand(1),
+            new RunCommand(() -> m_robotDrive.drive(0, 0, 180, true), m_robotDrive)
+        ),
+        new InstantCommand(() -> m_robotDrive.zeroHeading())
     );
+  }
+    public Command sideL1(){
+        return Commands.sequence(
+            new InstantCommand(() -> m_robotDrive.zeroHeading()),
+            new ParallelCommandGroup(
+                new WaitCommand(1),
+                new RunCommand(() -> m_robotDrive.drive(0.6, 0, 0, true), m_robotDrive)
+            )
+        );
+    }
+
+    public Command SideTaxi() {
+        return Commands.sequence(   
+            new ParallelDeadlineGroup(
+                new WaitCommand(2),
+                new RunCommand(() -> m_robotDrive.drive(0.6, 0, 0, true), m_robotDrive)
+            ),
+            new ParallelDeadlineGroup(
+                new WaitCommand(1),
+                new RunCommand(() -> m_robotDrive.drive(0, 0, 180, true), m_robotDrive)
+            ),
+            new InstantCommand(() -> m_robotDrive.zeroHeading())
+        );
   }
 
   /**
@@ -186,7 +219,7 @@ public class RobotContainer {
    * 
    * passes the autonomous command to the main {@link Robot} class.
   */
-  public Command getAutonomousCommand() {
+  public Command SideL1Scoring() {
     // create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
         AutoConstants.kMaxSpeedMetersPerSecond,
@@ -199,8 +232,7 @@ public class RobotContainer {
         new Pose2d(0, 0, new Rotation2d(0)),
         // interior waypoint mandatory
         List.of(new Translation2d(1, 0)),
-        // end 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
+        new Pose2d(0, 1, new Rotation2d(120)),
         config);
 
     var thetaController = new ProfiledPIDController(
@@ -222,14 +254,15 @@ public class RobotContainer {
     // reset odometry to the starting pose of the trajectory.
     m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
+    /* */
     // run path following command, then stop at the end.
     return new SequentialCommandGroup(
         new InstantCommand(() -> m_robotDrive.zeroHeading()),
-        swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false)),
+        swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, true)),
         new ParallelDeadlineGroup(
             new WaitCommand(1),
             new StartEndCommand(() -> m_roller.setVoltage(0.3), () -> m_roller.setVoltage(0), m_roller)
-        )
+        )       
     );
   }
 }

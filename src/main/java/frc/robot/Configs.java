@@ -20,7 +20,7 @@ public class Configs {
 
             drivingConfig
                 .idleMode(IdleMode.kBrake)
-                .smartCurrentLimit(50);
+                .smartCurrentLimit(40);
             drivingConfig.encoder
                 .positionConversionFactor(drivingFactor) // encoder ticks to metres
                 .velocityConversionFactor(drivingFactor / 60.0); // encoder velocity to m/s
@@ -28,7 +28,7 @@ public class Configs {
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 // may need to change, higher p reacts faster but can cause unwanted back and forth movement
                 // integral is drift correction derivitave is reduces sudden changes
-                .pid(0.09, 0, 0)//okok
+                .pid(0.08, 0, 0)//okok
                 .velocityFF(drivingVelocityFeedForward)
                 .outputRange(-1, 1);
 
@@ -43,7 +43,7 @@ public class Configs {
             turningConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
                 // may need to change
-                .pid(1, 0, 0)
+                .pid(5, 0, 0)
                 .velocityFF(drivingVelocityFeedForward)
                 .outputRange(-1, 1)
                 // PID wraps around for turning motor, eg go thru 0
