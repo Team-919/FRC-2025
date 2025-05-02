@@ -14,10 +14,13 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
-
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Configs.MAXSwerveModule;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.RollerCommand;
 import frc.robot.subsystems.CANRollerSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,31 +38,45 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 //import org.ejml.dense.row.CommonOps_MT_CDRM;
 
 public class RobotContainer {
     
     private final CANRollerSubsystem m_roller = new CANRollerSubsystem();
   // robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+    private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   // driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   
-
+    private final SendableChooser<Command> autoChooser; //HERE IT IS
   // the container for the robot. Contains subsystems, OI devices, and commands.
-  public RobotContainer() {
-    configureButtonBindings();
+    public RobotContainer() {
+        autoChooser = AutoBuilder.buildAutoChooser("OnePieceMid"); //HERE IT IS
+        SmartDashboard.putData("AutoChoosing", autoChooser);
+        
+        
 
-    m_robotDrive.setDefaultCommand(
-        // the left stick controls translation of the robot.
-        // turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true),
-            m_robotDrive));
+        //CANRollerSubsystem roller = new CANRollerSubsystem(); //HERE IT IS
+        //NamedCommands.registerCommand("rolling", roller.setVoltage(0.3)); //FINISH 
+        NamedCommands.registerCommand("rolling", new ParallelDeadlineGroup(new WaitCommand(1.5), new StartEndCommand (() -> m_roller.setVoltage(0.3), () -> m_roller.setVoltage(0), m_roller)));
+
+        configureButtonBindings();
+
+        m_robotDrive.setDefaultCommand(
+            // the left stick controls translation of the robot.
+            // turning is controlled by the X axis of the right stick.
+            new RunCommand(
+                () -> m_robotDrive.drive(
+                    -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                    -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                    -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                    true),
+                m_robotDrive));
+
   }
 
   /**
@@ -161,6 +178,15 @@ public class RobotContainer {
 
         );
     }
+    public Command getAutonomousCommand() { //HERE IT IS    
+        // This method loads the auto when it is called, however, it is recommended
+        // to first load your paths/autos when code starts, then return the
+        // pre-loaded auto/path
+        return new PathPlannerAuto("OnePieceMid");
+    }
+    public Command getAutonomousCommand2() { //HERE IT IS
+        return autoChooser.getSelected();
+      }
 
   public Command standStill(){
     

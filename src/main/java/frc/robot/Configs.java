@@ -1,6 +1,9 @@
 package frc.robot;
 
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.wpilibj2.command.Command;
+
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
@@ -50,6 +53,11 @@ public class Configs {
                 // pid controller going from 350 to 10 degrees will go thru 0 rather backwards, which will take longer
                 .positionWrappingEnabled(true)
                 .positionWrappingInputRange(0, turningFactor);
+        }
+
+        public Command autoBalanceCommand() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'autoBalanceCommand'");
         }
     }
 }

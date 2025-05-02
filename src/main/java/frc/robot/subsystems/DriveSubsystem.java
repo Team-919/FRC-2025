@@ -66,42 +66,51 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
 
-    public DriveSubsystem() {
-        // usage reporting for MAXSwerve template
-        HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
-
-
-        RobotConfig config;
-        try{
-        config = RobotConfig.fromGUISettings();
-        } catch (Exception e) {
-        // Handle exception as needed
-            e.printStackTrace();
-        }
-
-        AutoBuilder.configure
-        (this::getPose, this::resetOdometry, this::getRobotRelativeSpeeds, drive(), new PPHolonomicDriveController(new PIDConstants(5,0,0), new PIDConstants(5, 0, 0)), 
-        config, () -> {
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
+        public DriveSubsystem() {
+            // usage reporting for MAXSwerve template
+            HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
+    
+    
+            RobotConfig config;
+            try {
+                config = RobotConfig.fromGUISettings();
+            } catch (Exception e) {
+                // Handle exception as needed, maybe log it
+                e.printStackTrace();
+                throw new RuntimeException("Failed to load RobotConfig");
+            }
+    
+    
+            AutoBuilder.configure
+            (this::getPose, 
+            this::resetOdometry, 
+            this::getRobotRelativeSpeeds, 
+            (speeds, feedforwards) -> drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false),
+            new PPHolonomicDriveController(
+                new PIDConstants(5,0,0), 
+                new PIDConstants(5, 0, 0)), 
+            config, 
+            () -> {
+                var alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
                 return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
+                }
+                return false;
             }, 
             this);
-    }
+        }
+    
 
-    public ChassisSpeeds getRobotRelativeSpeeds(){
-        var frontLeftState = new SwerveModuleState();
-        var frontRightState = new SwerveModuleState();
-        var backLeftState = new SwerveModuleState();
-        var backRightState = new SwerveModuleState();
-
-        ChassisSpeeds chassisSpeeds = DriveConstants.kDriveKinematics.toChassisSpeeds(
-            frontLeftState, frontRightState, backLeftState, backRightState);
-        return chassisSpeeds;
-    }
-
+        public ChassisSpeeds getRobotRelativeSpeeds() {
+            SwerveModuleState[] moduleStates = new SwerveModuleState[] {
+                m_frontLeft.getState(),
+                m_frontRight.getState(),
+                m_rearLeft.getState(),
+                m_rearRight.getState()
+            };
+        
+            return DriveConstants.kDriveKinematics.toChassisSpeeds(moduleStates);
+        }
     @Override
     public void periodic() {
         // constantly update pos for odometry
