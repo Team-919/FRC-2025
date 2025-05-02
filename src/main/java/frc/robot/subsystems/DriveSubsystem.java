@@ -17,7 +17,6 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -72,23 +71,32 @@ public class DriveSubsystem extends SubsystemBase {
 
 
         RobotConfig config;
-        try{
-        config = RobotConfig.fromGUISettings();
+        try {
+            config = RobotConfig.fromGUISettings();
         } catch (Exception e) {
-        // Handle exception as needed
+            // Handle exception as needed, maybe log it
             e.printStackTrace();
+            throw new RuntimeException("Failed to load RobotConfig");
         }
 
+
         AutoBuilder.configure
-        (this::getPose, this::resetOdometry, this::getRobotRelativeSpeeds, drive(), new PPHolonomicDriveController(new PIDConstants(5,0,0), new PIDConstants(5, 0, 0)), 
-        config, () -> {
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            }, 
-            this);
+        (this::getPose, 
+        this::resetOdometry, 
+        this::getRobotRelativeSpeeds, 
+        (speeds, feedforwards) -> drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false),
+        new PPHolonomicDriveController(
+            new PIDConstants(5,0,0), 
+            new PIDConstants(5, 0, 0)), 
+        config, 
+        () -> {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+        }, 
+        this);
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds(){
