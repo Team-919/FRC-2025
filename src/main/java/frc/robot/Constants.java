@@ -16,10 +16,10 @@ public final class Constants {
     public static final double kWheelBase = Units.inchesToMeters(30.4);
 
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
-        new Translation2d(kWheelBase / 2, kTrackWidth / 2),
-        new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
-        new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
-        new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
+        new Translation2d(kWheelBase / 2, kTrackWidth / 2), // front right
+        new Translation2d(kWheelBase / 2, -kTrackWidth / 2), // back right
+        new Translation2d(-kWheelBase / 2, kTrackWidth / 2), // front left 
+        new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)); // back left
 
     // encoder offsets as wheels starting positions, 0, won't be exact with the chassis frame
     public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2; // -90 deg

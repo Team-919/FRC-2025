@@ -89,7 +89,7 @@ public class RobotContainer {
     new JoystickButton(m_driverController, XboxController.Button.kB.value)
         .whileTrue(new RunCommand(() -> m_robotDrive.zeroHeading(), m_robotDrive));
     new JoystickButton(m_driverController, XboxController.Button.kY.value)
-    .whileTrue(new StartEndCommand (() -> m_roller.setVoltage(-0.3), () -> m_roller.setVoltage(0), m_roller));
+        .whileTrue(new StartEndCommand (() -> m_roller.setVoltage(-0.3), () -> m_roller.setVoltage(0), m_roller));
     
   }
 
