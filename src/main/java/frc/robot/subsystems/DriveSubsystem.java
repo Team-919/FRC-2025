@@ -17,7 +17,6 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -99,18 +98,19 @@ public class DriveSubsystem extends SubsystemBase {
             }, 
             this);
         }
-    
 
-        public ChassisSpeeds getRobotRelativeSpeeds() {
-            SwerveModuleState[] moduleStates = new SwerveModuleState[] {
-                m_frontLeft.getState(),
-                m_frontRight.getState(),
-                m_rearLeft.getState(),
-                m_rearRight.getState()
-            };
-        
-            return DriveConstants.kDriveKinematics.toChassisSpeeds(moduleStates);
-        }
+
+
+    public ChassisSpeeds getRobotRelativeSpeeds() {
+        SwerveModuleState[] moduleStates = new SwerveModuleState[] {
+            m_frontLeft.getState(),
+            m_frontRight.getState(),
+            m_rearLeft.getState(),
+            m_rearRight.getState()
+        };
+    
+        return DriveConstants.kDriveKinematics.toChassisSpeeds(moduleStates);
+    }
     @Override
     public void periodic() {
         // constantly update pos for odometry
