@@ -21,12 +21,6 @@
           "data": {
             "name": "autoBalance"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": null
-          }
         }
       ]
     }

@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,6 +42,7 @@ import java.util.List;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 //import org.ejml.dense.row.CommonOps_MT_CDRM;
 
@@ -55,7 +57,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser; //HERE IT IS
   // the container for the robot. Contains subsystems, OI devices, and commands.
     public RobotContainer() {
-        autoChooser = AutoBuilder.buildAutoChooser("OnePieceMid"); //HERE IT IS
+        autoChooser = AutoBuilder.buildAutoChooser("New Auto"); //HERE IT IS
         SmartDashboard.putData("AutoChoosing", autoChooser);
         
         
@@ -182,7 +184,13 @@ public class RobotContainer {
         // This method loads the auto when it is called, however, it is recommended
         // to first load your paths/autos when code starts, then return the
         // pre-loaded auto/path
-        return new PathPlannerAuto("OnePieceMid");
+        try{
+            PathPlannerPath plannedPath = PathPlannerPath.fromPathFile("OnePieceMid");
+            return AutoBuilder.followPath(plannedPath);
+        } catch (Exception e) {
+            DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+            return Commands.none();
+        }
     }
     public Command getAutonomousCommand2() { //HERE IT IS
         return autoChooser.getSelected();
