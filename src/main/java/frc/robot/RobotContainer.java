@@ -57,16 +57,14 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser; //HERE IT IS
   // the container for the robot. Contains subsystems, OI devices, and commands.
     public RobotContainer() {
-        autoChooser = AutoBuilder.buildAutoChooser("New Auto"); //HERE IT IS
-        SmartDashboard.putData("AutoChoosing", autoChooser);
-        
-        
 
         //CANRollerSubsystem roller = new CANRollerSubsystem(); //HERE IT IS
         //NamedCommands.registerCommand("rolling", roller.setVoltage(0.3)); //FINISH 
         NamedCommands.registerCommand("rolling", new ParallelDeadlineGroup(new WaitCommand(1.5), new StartEndCommand (() -> m_roller.setVoltage(0.3), () -> m_roller.setVoltage(0), m_roller)));
 
         configureButtonBindings();
+        autoChooser = AutoBuilder.buildAutoChooser("New New Auto"); //HERE IT IS
+        SmartDashboard.putData("AutoChoosing", autoChooser);
 
         m_robotDrive.setDefaultCommand(
             // the left stick controls translation of the robot.
@@ -180,21 +178,13 @@ public class RobotContainer {
 
         );
     }
-    public Command getAutonomousCommand() { //HERE IT IS    
+    public Command pathplanner() { //HERE IT IS    
         // This method loads the auto when it is called, however, it is recommended
         // to first load your paths/autos when code starts, then return the
-        // pre-loaded auto/path
-        try{
-            PathPlannerPath plannedPath = PathPlannerPath.fromPathFile("OnePieceMid");
-            return AutoBuilder.followPath(plannedPath);
-        } catch (Exception e) {
-            DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-            return Commands.none();
-        }
-    }
-    public Command getAutonomousCommand2() { //HERE IT IS
         return autoChooser.getSelected();
-      }
+
+    }
+
 
   public Command standStill(){
     

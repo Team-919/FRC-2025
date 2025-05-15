@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     //Go Straight and Spew L1 STARTING IN MIDDLE
-    m_autonomousCommand = m_robotContainer.Middle();
+    m_autonomousCommand = m_robotContainer.pathplanner();
 
     //Go Straight STARTING ON SIDES
     //m_autonomousCommand = m_robotContainer.Side();
