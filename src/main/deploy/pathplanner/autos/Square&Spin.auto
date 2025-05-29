@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpinNE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NE-NW"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpinNW"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NW-SW"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpinSW"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SW-SE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpinSE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SE-NE"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "rolling"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

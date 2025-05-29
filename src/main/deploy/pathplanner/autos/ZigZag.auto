@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "OnePieceMid"
+            "pathName": "ZigZag"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "rolling"
+            "name": "autoBalance"
           }
         }
       ]
